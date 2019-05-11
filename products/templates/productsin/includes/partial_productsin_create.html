@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'productsin_create' %}" class="js-productsin-create-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Tạo Hàng Nhập</h4>
+  </div>
+  <div class="modal-body">
+    {% include 'productsin/includes/partial_productsin_form.html' %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-primary">Tạo Hàng Nhập</button>
+  </div>
+</form>

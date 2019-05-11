@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'ct_update' id=ct.invoice.id pk=ct.id  %}" class="js-ct-update-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Cập Nhật Công Thợ</h4>
+  </div>
+  <div class="modal-body">
+    {% include 'includes/partial_piin_form.html' %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-primary">Cập Nhật</button>
+  </div>
+</form>

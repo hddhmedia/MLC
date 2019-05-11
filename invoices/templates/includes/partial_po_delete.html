@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'po_delete' poo.invoice.id poo.id %}" class="js-po-delete-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Xác Nhận Xóa Hàng Xuất</h4>
+  </div>
+  <div class="modal-body">
+    <p class="lead">Bạn Có Muốn Xóa Hàng Xuất Này Không <strong>{{ poo.id }}</strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-danger">Xóa</button>
+  </div>
+</form>

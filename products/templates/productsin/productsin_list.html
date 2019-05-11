@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block javascript %}
+  <script src="{% static 'js/productsins.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <h3 class="page-header">Hàng Nhập</h3>
+<div>
+ <p>
+    <button type="button"
+            class="btn btn-primary js-create-productsin"
+            data-url="{% url 'productsin_create' %}">
+      <i class="fas fa-plus"></i>
+      Tạo Hàng Nhập Mới
+    </button>
+  </p>
+  <table class="table" id="productsin-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Hàng</th>
+        <th>Số Chỉ</th>
+        <th>Số Tiền/Chỉ</th>
+        <th>Tuổi Của Hàng(%)</th>
+        <th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'productsin/includes/partial_productsin_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-productsin"> 
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+{% endblock %}

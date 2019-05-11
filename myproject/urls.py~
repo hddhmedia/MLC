@@ -1,0 +1,74 @@
+"""myproject URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/2.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
+from customers import views
+
+from products import views as p_views
+
+from invoices import views as i_views
+
+from django.views.generic import TemplateView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('customer/', views.customer_list, name='customer_list'),
+    path('customer/create/', views.customer_create, name='customer_create'),
+    path('customer/(<pk>\d+)/update/', views.customer_update, name='customer_update'),
+    path('customer/(<pk>\d+)/delete/', views.customer_delete, name='customer_delete'),
+
+    path('productsin/', p_views.productsin_list, name='productsin_list'),
+    path('productsin/create/', p_views.productsin_create, name='productsin_create'),
+    path('productsin/(<pk>\d+)/update/', p_views.productsin_update, name='productsin_update'),
+    path('productsin/(<pk>\d+)/delete/', p_views.productsin_delete, name='productsin_delete'),
+
+    path('productsout/', p_views.productsout_list, name='productsout_list'),
+    path('productsout/create/', p_views.productsout_create, name='productsout_create'),
+    path('productsout/(<pk>\d+)/update/', p_views.productsout_update, name='productsout_update'),
+    path('productsout/(<pk>\d+)/delete/', p_views.productsout_delete, name='productsout_delete'),
+
+    path('congtho/create/', p_views.congtho_create, name='congtho_create'),
+    path('congtho/(<pk>\d+)/update/', p_views.congtho_update, name='congtho_update'),
+    path('congtho/(<pk>\d+)/delete/', p_views.congtho_delete, name='congtho_delete'),
+
+
+    path('invoice/', i_views.invoice_list, name='invoice_list'),
+    path('invoice/update/<int:id>/', i_views.invoice_update, name='invoice_update'),
+    path('get_invoicecus/<int:customer_id>/', i_views.get_invoicecus, name='get_invoicecus'),
+    path('invoice/create/', i_views.invoice_create, name='invoice_create'),
+    path('invoice/create/<int:id>/', i_views.invoice_created, name='invoice_created'),
+    path('invoice/create/<int:id>/new/', i_views.piin_create, name='piin_create'),
+    path('invoice/create/<int:id>/tm/', i_views.tm_create, name='tm_create'),
+    path('invoice/create/<int:id>/tm/<int:pk>/update/', i_views.tm_update, name='tm_update'),
+    path('invoice/create/<int:id>/tm/<int:pk>/delete/', i_views.tm_delete, name='tm_delete'),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('invoice/create/<int:id>/<int:pk>/update/', i_views.piin_update, name='piin_update'),
+    path('invoice/create/<int:id>/<int:pk>/delete/', i_views.piin_delete, name='piin_delete'),
+
+    path('invoice/create/<int:id>/congtho/', i_views.ct_create, name='ct_create'),
+    path('invoice/create/<int:id>/congtho/<int:pk>/update/', i_views.ct_update, name='ct_update'),
+    path('invoice/create/<int:id>/congtho/<int:pk>/delete/', i_views.ct_delete, name='ct_delete'),
+
+    path('invoice/create/<int:id>/po/', i_views.po_create, name='po_create'),
+    path('invoice/create/<int:id>/po/<int:pk>/update/', i_views.po_update, name='po_update'),
+    path('invoice/create/<int:id>/po/<int:pk>/delete/', i_views.po_delete, name='po_delete'),
+
+    path('invoice/create/<int:id>/tmo/', i_views.tmo_create, name='tmo_create'),
+    path('invoice/create/<int:id>/tmo/<int:pk>/update/', i_views.tmo_update, name='tmo_update'),
+    path('invoice/create/<int:id>/tmo/<int:pk>/delete/', i_views.tmo_delete, name='tmo_delete'),
+
+
+]

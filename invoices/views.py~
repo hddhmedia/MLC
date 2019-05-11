@@ -1,0 +1,475 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Invoice, PiInvoice, TienMat, TienTho, PoInvoice, TienMatOut
+from .forms import InvoiceForm, PiInvoiceForm, TienMatForm, TienThoForm, PoInvoiceForm, TienMatOutForm
+from customers.models import Customer
+import simplejson
+from django.http import HttpResponse
+
+from django.http import JsonResponse
+
+from django.template.loader import render_to_string
+from decimal import Decimal
+
+# Create your views here.
+# Create your views here.
+
+
+def invoice_create(request):
+    #invoices = Invoice.objects.all()
+    #return render(request, 'invoice_list.html', {'invoices': invoices})
+    if request.method == 'POST':
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            invoice = form.save()
+            form.save(commit=False)
+            form.customer = invoice.customer
+            form.save()
+            #pass  # does nothing, just trigger the validation
+            return redirect('invoice_created', id=invoice.id)
+        else:
+            print(form.errors)
+    else:
+        #print(form.errors)
+        form = InvoiceForm()
+        #form2 = PiInvoiceForm(prefix="form2")
+        print("ccc")
+    return render(request, 'invoice_create.html', {'form': form})
+
+def invoice_update(request, id):
+    invoice = Invoice.objects.get(id=id)
+    piins = invoice.piinvoices.all()
+    tienmats = invoice.tienmats.all()
+    tienmatos = invoice.tienmatos.all()
+    tienthos = invoice.tienthos.all()
+    pos = invoice.poinvoices.all()
+    return render(request, 'invoice_update.html', {'invoice':invoice ,'piins':piins, 'tienmats': tienmats, 'tienthos': tienthos, 'pos':pos, 'tienmatos': tienmatos, })
+def invoice_delete(request, id):
+    invoice = Invoice.objects.get(id=id)
+    invoice.delete()
+    invoices = Invoice.objects.all()
+    return render(request, 'invoice_list.html', {'invoices': invoices})
+
+
+def invoice_created(request, id):
+    invoice = Invoice.objects.get(id=id)
+    piins = invoice.piinvoices.all()
+    tienmats = invoice.tienmats.all()
+    tienmatos = invoice.tienmatos.all()
+    tienthos = invoice.tienthos.all()
+    pos = invoice.poinvoices.all()
+    return render(request, 'invoice_created.html', {'invoice':invoice ,'piins':piins, 'tienmats': tienmats, 'tienthos': tienthos, 'pos':pos, 'tienmatos': tienmatos, })
+
+def invoice_list(request):
+    invoices = Invoice.objects.all()
+    return render(request, 'invoice_list.html', {'invoices': invoices})
+
+def get_invoicecus(request, customer_id):
+    customer = Customer.objects.get(pk=customer_id)
+    #Invoicecus = Invoice.objects.filter(customer=customer)
+    invoicecus_dict = {}
+    #for school in schools:
+    invoicecus_dict[customer.id] = customer.name
+    invoicecus_dict['phone'] = str(customer.phone_number)
+    invoicecus_dict['address'] = customer.address
+    return HttpResponse(simplejson.dumps(invoicecus_dict), content_type="application/json")
+
+
+def save_piin_form(request, form, template_name):
+    print("AAAAAAAAA")
+    data = dict()
+    print(request.method)
+    if request.method == 'POST':
+        print("XXX")
+        if form.is_valid():
+            print("YYY")
+            #piForm = form.save(commit=False)
+            #form.invoice= invoice
+            form.save()
+            data['form_is_valid'] = True
+            piins = PiInvoice.objects.all()
+            #piins = invoice.piinvoices.all()
+            data['html_piin_list'] = render_to_string('includes/partial_piin_list.html', {
+                'piins': piins
+            })
+        else:
+            data['form_is_valid'] = False
+            context = {'form': form}
+            data['html_form'] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def piin_creat_(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    print("EEE")
+    print(invoice.customer)
+    if request.method == 'POST':
+        print("FFF")
+        form = PiInvoiceForm(request.POST, instance=invoce)
+    else:
+        print("GGGG")
+        form = PiInvoiceForm(instance=invoice)
+    print(form.errors)
+    return save_piin_form(request, form, 'includes/partial_piin_create.html') 
+
+def piin_create(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = PiInvoiceForm(request.POST)
+        if form.is_valid():
+            pii = form.save(commit=False)
+            pii.invoice = invoice
+            pii.save()
+            data['form_is_valid'] = True
+            piins = invoice.piinvoices.all()
+            data['html_piin_list'] = render_to_string('includes/partial_piin_list.html', {
+                'piins': piins
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = PiInvoiceForm()
+
+    context = {'form': form, 'invoice': invoice}
+    data['html_form'] = render_to_string('includes/partial_piin_create.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def piin_update(request, id, pk):
+    pii = get_object_or_404(PiInvoice, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = PiInvoiceForm(request.POST, instance=pii)
+        if form.is_valid():
+            piin = form.save(commit=False)
+            piin.invoice = invoice
+            piin.save()
+            data['form_is_valid'] = True
+            piins = invoice.piinvoices.all()
+            data['html_piin_list'] = render_to_string('includes/partial_piin_list.html', {
+                'piins': piins
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = PiInvoiceForm(instance=pii)
+
+    context = {'form': form, 'pii': pii}
+    data['html_form'] = render_to_string('includes/partial_piin_update.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def piin_delete(request, id, pk):
+    pii = get_object_or_404(PiInvoice, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        pii.delete()
+        data['form_is_valid'] = True
+        piins = invoice.piinvoices.all()
+        data['html_piin_list'] = render_to_string('includes/partial_piin_list.html', {
+          'piins': piins
+       })
+    else:
+        context = {'pii': pii}
+        data['html_form'] = render_to_string('includes/partial_piin_delete.html',
+                                             context,
+                                             request=request
+                                             )
+    return JsonResponse(data)
+# Tien Mat Nhap
+def tm_create(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienMatForm(request.POST)
+        if form.is_valid():
+            tii = form.save(commit=False)
+            tii.invoice = invoice
+            tii.save()
+            data['form_is_valid'] = True
+            tienmats = invoice.tienmats.all()
+            data['html_tm_list'] = render_to_string('includes/partial_tm_list.html', {
+                'tienmats': tienmats
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienMatForm()
+
+    context = {'form': form, 'invoice': invoice}
+    data['html_form'] = render_to_string('includes/partial_tm_create.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def tm_update(request, id, pk):
+    tm = get_object_or_404(TienMat, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienMatForm(request.POST, instance=tm)
+        if form.is_valid():
+            piin = form.save(commit=False)
+            piin.invoice = invoice
+            piin.save()
+            data['form_is_valid'] = True
+            tienmats = invoice.tienmats.all()
+            data['html_tm_list'] = render_to_string('includes/partial_tm_list.html', {
+                'tienmats': tienmats
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienMatForm(instance=tm)
+
+    context = {'form': form, 'tm': tm}
+    data['html_form'] = render_to_string('includes/partial_tm_update.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def tm_delete(request, id, pk):
+    tm = get_object_or_404(TienMat, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        tm.delete()
+        data['form_is_valid'] = True
+        tienmats = invoice.tienmats.all()
+        data['html_tm_list'] = render_to_string('includes/partial_tm_list.html', {
+          'tienmats': tienmats
+       })
+    else:
+        context = {'tm': tm}
+        data['html_form'] = render_to_string('includes/partial_tm_delete.html',
+                                             context,
+                                             request=request
+                                             )
+    return JsonResponse(data)
+
+
+# Tinh Gia Tho
+def ct_create(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienThoForm(request.POST)
+        if form.is_valid():
+            tth = form.save(commit=False)
+            tth.invoice = invoice
+            tth.save()
+            data['form_is_valid'] = True
+            tienthos = invoice.tienthos.all()
+            data['html_ct_list'] = render_to_string('includes/partial_ct_list.html', {
+                'tienthos': tienthos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienThoForm()
+
+    context = {'form': form, 'invoice': invoice}
+    data['html_form'] = render_to_string('includes/partial_ct_create.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+ 
+def ct_update(request, id, pk):
+    ct = get_object_or_404(TienTho, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienThoForm(request.POST, instance=ct)
+        if form.is_valid():
+            th = form.save(commit=False)
+            th.invoice = invoice
+            th.save()
+            data['form_is_valid'] = True
+            tienthos = invoice.tienthos.all()
+            data['html_ct_list'] = render_to_string('includes/partial_ct_list.html', {
+                'tienthos': tienthos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienThoForm(instance=ct)
+
+    context = {'form': form, 'ct': ct}
+    data['html_form'] = render_to_string('includes/partial_ct_update.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def ct_delete(request, id, pk):
+    ct = get_object_or_404(TienTho, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        ct.delete()
+        data['form_is_valid'] = True
+        tienthos = invoice.tienthos.all()
+        data['html_ct_list'] = render_to_string('includes/partial_ct_list.html', {
+          'tienthos': tienthos
+       })
+    else:
+        context = {'ct': ct}
+        data['html_form'] = render_to_string('includes/partial_ct_delete.html',
+                                             context,
+                                             request=request
+                                             )
+    return JsonResponse(data)
+# Tinh Hang Xuat
+def po_create(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = PoInvoiceForm(request.POST)
+        if form.is_valid():
+            poo = form.save(commit=False)
+            poo.invoice = invoice
+            poo.save()
+            data['form_is_valid'] = True
+            pos = invoice.poinvoices.all()
+            data['html_po_list'] = render_to_string('includes/partial_po_list.html', {
+                'pos': pos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = PoInvoiceForm()
+
+    context = {'form': form, 'invoice': invoice}
+    data['html_form'] = render_to_string('includes/partial_po_create.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def po_update(request, id, pk):
+    poo = get_object_or_404(PoInvoice, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = PoInvoiceForm(request.POST, instance=poo)
+        if form.is_valid():
+            poon = form.save(commit=False)
+            poon.invoice = invoice
+            poon.save()
+            data['form_is_valid'] = True
+            pos = invoice.poinvoices.all()
+            data['html_po_list'] = render_to_string('includes/partial_po_list.html', {
+                'pos': pos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = PoInvoiceForm(instance=poo)
+
+    context = {'form': form, 'poo': poo}
+    data['html_form'] = render_to_string('includes/partial_po_update.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def po_delete(request, id, pk):
+    poo = get_object_or_404(PoInvoice, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        poo.delete()
+        data['form_is_valid'] = True
+        pos = invoice.poinvoices.all()
+        data['html_po_list'] = render_to_string('includes/partial_po_list.html', {
+          'pos': pos
+       })
+    else:
+        context = {'poo': poo}
+        data['html_form'] = render_to_string('includes/partial_po_delete.html',
+                                             context,
+                                             request=request
+                                             )
+    return JsonResponse(data)
+
+# Tien Mat Xuat
+def tmo_create(request, id):
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienMatOutForm(request.POST)
+        if form.is_valid():
+            too = form.save(commit=False)
+            too.invoice = invoice
+            too.save()
+            data['form_is_valid'] = True
+            tienmatos = invoice.tienmatos.all()
+            data['html_tmo_list'] = render_to_string('includes/partial_tmo_list.html', {
+                'tienmatos': tienmatos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienMatOutForm()
+
+    context = {'form': form, 'invoice': invoice}
+    data['html_form'] = render_to_string('includes/partial_tmo_create.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def tmo_update(request, id, pk):
+    tmo = get_object_or_404(TienMatOut, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        form = TienMatOutForm(request.POST, instance=tmo)
+        if form.is_valid():
+            piin = form.save(commit=False)
+            piin.invoice = invoice
+            piin.save()
+            data['form_is_valid'] = True
+            tienmatos = invoice.tienmatos.all()
+            data['html_tmo_list'] = render_to_string('includes/partial_tmo_list.html', {
+                'tienmatos': tienmatos
+            })
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = TienMatOutForm(instance=tmo)
+
+    context = {'form': form, 'tmo': tmo}
+    data['html_form'] = render_to_string('includes/partial_tmo_update.html',
+        context,
+        request=request
+    )
+    return JsonResponse(data)
+
+def tmo_delete(request, id, pk):
+    tmo = get_object_or_404(TienMatOut, invoice__id=id, id=pk)
+    invoice = get_object_or_404(Invoice, id=id)
+    data = dict()
+    if request.method == 'POST':
+        tmo.delete()
+        data['form_is_valid'] = True
+        tienmatos = invoice.tienmatos.all()
+        data['html_tmo_list'] = render_to_string('includes/partial_tmo_list.html', {
+          'tienmatos': tienmatos
+       })
+    else:
+        context = {'tmo': tmo}
+        data['html_form'] = render_to_string('includes/partial_tmo_delete.html',
+                                             context,
+                                             request=request
+                                             )
+    return JsonResponse(data)

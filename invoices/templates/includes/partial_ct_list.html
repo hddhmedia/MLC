@@ -1,0 +1,29 @@
+{% load humanize %}
+
+{% for ct in tienthos %} 
+<tr>
+          <td>{{ ct.tientho.name }}</td>
+          <td>{{ ct.tientho.congtho|floatformat:"0"|intcomma }}</td>
+          <td>{{ ct.soluong|floatformat:"0"|intcomma }}</td>
+          <td>{{ ct.get_cost|floatformat:"0"|intcomma }}</td>
+          <td>{{ ct.note }}</td>
+	  <td>
+      <button type="button"
+              class="btn btn-warning btn-sm js-update-ct"
+              data-url="{% url 'ct_update' id=ct.invoice.id pk=ct.id %}">
+        <i class="fa fa-pencil"></i> Sửa
+      </button>
+      <button type="button"
+              class="btn btn-danger btn-sm js-delete-ct"
+              data-url="{% url 'ct_delete' ct.invoice.id ct.id %}">
+        <i class="fa fa-trash"></i> Xóa
+      </button>
+
+      </td>
+
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="8" class="text-center bg-warning">Không Có Công Thợ</td>
+  </tr>
+{% endfor %}

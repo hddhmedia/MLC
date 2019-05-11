@@ -1,0 +1,139 @@
+from django.db import models
+
+from decimal import Decimal
+
+from customers.models import Customer
+from products.models import ProductIn, ProductOut, CongPo
+
+from django.utils import timezone
+
+# Create your models here.
+
+class Invoice(models.Model):
+    mota = models.CharField(max_length=100, null=True, blank=True)
+    customer = models.ForeignKey(Customer, related_name='invoices', on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.created_at = timezone.now()
+        self.updated_at = timezone.now()
+        return super(Invoice, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return '{}'.format(self.id)
+
+    def get_cost_nhap(self):
+        return (sum(item.get_cost() for item in self.piinvoices.all()) + sum(it.tienmat for it in self.tienmats.all()))
+
+    def get_cost_xuat(self):
+        return (sum(ite.get_cost() for ite in self.poinvoices.all()) + sum(itt.tienmato for itt in self.tienmatos.all()) + sum(itez.get_cost() for itez in self.tienthos.all()))
+
+    def total_cost(self):
+        nhap = (sum(item.get_cost() for item in self.piinvoices.all()) + sum(it.tienmat for it in self.tienmats.all()))
+        xuat = (sum(ite.get_cost() for ite in self.poinvoices.all()) + sum(itt.tienmato for itt in self.tienmatos.all()) + sum(itez.get_cost() for itez in self.tienthos.all()))
+        return xuat - nhap
+class PiInvoice(models.Model):
+    invoice = models.ForeignKey(Invoice,
+                              related_name='piinvoices',
+                              on_delete=models.CASCADE)
+ 
+    piinvoice = models.ForeignKey(ProductIn,
+                                  related_name='piinvoices',
+                                  verbose_name="Tên Sản Phẩm:",
+                                  on_delete=models.CASCADE)
+
+    
+#name = models.CharField(max_length=50, verbose_name="Tên Sản Phẩm:")
+    sochi = models.DecimalField(max_digits=10, verbose_name="Số Chỉ: ", 
+                              null=True, blank=True, decimal_places=2)
+    tienchi = models.DecimalField(max_digits=10, decimal_places=2, 
+                                  verbose_name="Số Tiền/Chỉ:", 
+                                  null=True, blank=True)
+    #tienmat = models.FloatField(max_length=10, verbose_name="Số Tuổi(%):", 
+    #                         null=True, blank=True)
+    tienmat = models.DecimalField(max_digits=12, decimal_places=2,
+                                  verbose_name="Tiền Mặt:",
+                                  null=True, blank=True)
+
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:", 
+                            null=True, blank=True)
+
+    def __str__(self):
+        return '{}'.format(self.id)
+
+    #@property
+    def get_cost(self):
+        return self.tienchi*(self.piinvoice.tuoi/Decimal('100'))*self.sochi
+    
+class TienMat(models.Model):
+    invoice = models.ForeignKey(Invoice,
+                              related_name='tienmats',
+                              on_delete=models.CASCADE)
+    tienmat = models.DecimalField(max_digits=12, decimal_places=2,
+                                  default=Decimal('0.00'),
+                                  verbose_name="Tiền Mặt:",
+                                  null=True, blank=True)
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:",
+                            null=True, blank=True)
+
+
+class TienTho(models.Model):
+    invoice = models.ForeignKey(Invoice,
+                              related_name='tienthos',
+                              on_delete=models.CASCADE)
+
+    tientho = models.ForeignKey(ProductOut,
+                                related_name='tienthos',
+                                on_delete=models.CASCADE,
+                                verbose_name="Tên Sản Phẩm:")
+    soluong =  models.DecimalField(max_digits=12, decimal_places=2,
+                                  default=Decimal('0.00'),
+                                  verbose_name="Số Lượng:",
+                                  null=True, blank=True)
+
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:",
+                            null=True, blank=True)
+
+    #@property
+    def get_cost(self):
+        return self.soluong*self.tientho.congtho
+    
+   
+class PoInvoice(models.Model):
+    invoice = models.ForeignKey(Invoice,
+                              related_name='poinvoices',
+                              on_delete=models.CASCADE)
+
+    poinvoice = models.ForeignKey(CongPo,
+                              related_name='poinvoices',
+                              on_delete=models.CASCADE)
+    sochi =  models.DecimalField(max_digits=12, decimal_places=2,
+                                  default=Decimal('0.00'),
+                                  verbose_name="Số Chỉ:",
+                                  null=True, blank=True)
+    tienchi = models.DecimalField(max_digits=10, decimal_places=2,
+                                  verbose_name="Số Tiền/Chỉ:",
+                                  null=True, blank=True)
+
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:",
+                            null=True, blank=True)
+
+    #@property
+    def get_cost(self):
+        return self.sochi*self.tienchi*(self.poinvoice.tuoi/Decimal('100'))
+
+class TienMatOut(models.Model):
+    invoice = models.ForeignKey(Invoice,
+                              related_name='tienmatos',
+                              on_delete=models.CASCADE)
+    tienmato = models.DecimalField(max_digits=12, decimal_places=2,
+                                  default=Decimal('0.00'),
+                                  verbose_name="Tiền Mặt:",
+                                  null=True, blank=True)
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:",
+                            null=True, blank=True)
+
+    

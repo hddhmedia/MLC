@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block javascript %}
+  <script src="{% static 'js/productsouts.js' %}"></script>
+  <script src="{% static 'js/congthos.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div>
+  <h3 class="page-header">Công Thợ</h3>
+  <p>
+    <button type="button"
+            class="btn btn-primary js-create-productsout"
+            data-url="{% url 'productsout_create' %}">
+      <i class="fas fa-plus"></i>
+      Tạo Công Thợ Mới
+    </button>
+  </p>
+  <table class="table" id="productsout-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Hàng</th>
+	<th>Công Thợ</th>
+        <th>Ngày Tạo</th>
+	<th>Ngày Thay Đổi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'productsout/includes/partial_productsout_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-productsout">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+<div>
+  <h3 class="page-header">Hàng Xuất</h3>
+  <p>
+    <button type="button"
+            class="btn btn-primary js-create-congtho"
+            data-url="{% url 'congtho_create' %}">
+      <i class="fas fa-plus"></i>
+      Tạo Hàng Nhập Mới
+    </button>
+  </p>
+  <table class="table" id="congtho-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Hàng</th>
+	<th>Số Tiền/Chỉ</th>
+        <th>Tuổi</th>
+        <th>Ngày Tạo</th>
+        <th>Ngày Thay Đổi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'productsout/includes/partial_congtho_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-congtho">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}

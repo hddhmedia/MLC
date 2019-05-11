@@ -1,0 +1,26 @@
+{% for customer in customers %}
+  <tr>
+    <td>{{ customer.id }}</td>
+    <td>{{ customer.name }}</td>
+    <td>{{ customer.phone_number }}</td>
+    <td>{{ customer.address }}</td>
+    <td>{{ customer.created }}</td>
+    <td>{{ customer.updated }}</td>
+    <td>
+      <button type="button"
+              class="btn btn-warning btn-sm js-update-customer"
+              data-url="{% url 'customer_update' customer.id %}">
+        <span class="glyphicon glyphicon-pencil"></span> Sửa
+      </button>
+      <button type="button"
+              class="btn btn-danger btn-sm js-delete-customer"
+              data-url="{% url 'customer_delete' customer.id %}">
+        <i class="fa fa-trash"></i> Xóa
+      </button>
+    </td>
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="8" class="text-center bg-warning">Không Có Khách Hàng</td>
+  </tr>
+{% endfor %}

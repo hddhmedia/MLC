@@ -1,0 +1,27 @@
+{% for po in productsouts %}
+        <tr>
+          <td>{{ po.id }}</td>
+          <td>{{ po.name }}</td>
+          <td>{{ po.sochi }}</td>
+          <td>{{ po.tienchi }}</td>
+          <td>{{ po.tuoi }}</td>
+	  <td>{{ po.congtho }}</td>
+          <td>{{ po.note }}</td>
+	  <td>
+	    <button type="button"
+              class="btn btn-warning btn-sm js-update-productsout"
+              data-url="{% url 'productsout_update' po.id %}">
+              <i class="fa fa-pencil"></i> Sửa
+	    </button>
+	    <button type="button"
+              class="btn btn-danger btn-sm js-delete-productsout"
+              data-url="{% url 'productsout_delete' po.id %}">
+        <i class="fa fa-trash"></i> Xóa
+      </button>
+	  </td>
+        </tr>
+      {% empty %}
+        <tr>
+         <td colspan="7" class="text-center bg-warning">Không Có Hàng Xuất</td>
+        </tr>
+{% endfor %}

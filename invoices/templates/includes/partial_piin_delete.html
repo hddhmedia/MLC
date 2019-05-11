@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'piin_delete' pii.invoice.id pii.id %}" class="js-piin-delete-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Xác Nhận Xóa</h4>
+  </div>
+  <div class="modal-body">
+    <p class="lead">Bạn Có Chắc Chắn Muốn Xóa Không <strong>{{ pii.id }}</strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-danger">Xác Nhận Xóa</button>
+  </div>
+</form>

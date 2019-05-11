@@ -1,0 +1,51 @@
+from django.db import models
+
+from django.utils import timezone
+# Create your models here.
+
+class ProductIn(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Tên Sản Phẩm:")
+    sochi = models.DecimalField(max_digits=10, verbose_name="Số Chỉ: ", null=True, blank=True, decimal_places=2)
+    tienchi = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Số Tiền/Chỉ:", null=True, blank=True)
+    tuoi = models.DecimalField(max_digits=10, verbose_name="Số Tuổi(%):", null=True, blank=True, decimal_places=2)
+    note = models.CharField(max_length=50, verbose_name="Ghi Chú:", null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class ProductOut(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Tên Sản Phẩm:")
+    congtho = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Công Thợ:", null=True, blank=True)
+    createdpo = models.DateField(auto_now_add=True)
+    updatedpo = models.DateField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.createdpo = timezone.now()
+        self.updatedpo = timezone.now()
+        return super(ProductOut, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+
+class CongPo(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Tên Sản Phẩm:")
+    tienchi = models.DecimalField(max_digits=10, decimal_places=2, verbose_name
+="Số Tiền/Chỉ:", null=True, blank=True)
+    tuoi = models.DecimalField(max_digits=10, verbose_name="Số Tuổi(%):", 
+                             null=True, blank=True, decimal_places=2)
+    createdco = models.DateField(auto_now_add=True)
+    updatedco = models.DateField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.createdco = timezone.now()
+        self.updatedco = timezone.now()
+        return super(CongPo, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+

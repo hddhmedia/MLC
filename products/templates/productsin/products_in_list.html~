@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="page-header">Hàng Nhập</h1>
+  <table class="table" id="productin-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tên Hàng</th>
+        <th>Số Chỉ</th>
+        <th>Số Tiền/Chỉ</th>
+        <th>Tuổi Của Hàng</th>
+        <th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pi in products_in_list %}
+        <tr>
+          <td>{{ pi.id }}</td>
+          <td>{{ pi.name }}</td>
+          <td>{{ pi.sochi }}</td>
+          <td>{{ pi.tienchi }}</td>
+          <td>{{ pi.tuoi }}</td>
+          <td>{{ pi.note }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" class="text-center bg-warning">Không Có Hàng Nhập</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

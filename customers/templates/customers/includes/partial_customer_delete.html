@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'customer_delete' customer.id %}" class="js-customer-delete-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Xác Nhận Xóa Khách Hàng</h4>
+  </div>
+  <div class="modal-body">
+    <p class="lead">Bạn Chăc Chắn Rằng Muốn Xóa Khách Hàng Này Khỏi Danh Sách <strong>{{ customer.name }}</strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-danger">Xóa Khách Hàng</button>
+  </div>
+</form>

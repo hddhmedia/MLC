@@ -1,0 +1,29 @@
+{% load humanize %}
+{% for inv in piins %} 
+<tr>
+          <td>{{ inv.piinvoice.name }}</td>
+          <td>{{ inv.sochi }}</td>
+          <td>{{ inv.piinvoice.tuoi|floatformat:"0" }}</td>
+          <td>{{ inv.tienchi|floatformat:"0"|intcomma }}</td>
+          <td>{{ inv.get_cost|floatformat:"0"|intcomma }}</td>
+          <td>{{ inv.note }}</td>
+	  <td>
+      <button type="button"
+              class="btn btn-warning btn-sm js-update-piin"
+              data-url="{% url 'piin_update' id=inv.invoice.id pk=inv.id %}">
+        <i class="fa fa-pencil"></i> Sửa
+      </button>
+      <button type="button"
+              class="btn btn-danger btn-sm js-delete-piin"
+              data-url="{% url 'piin_delete' inv.invoice.id inv.id %}">
+        <i class="fa fa-trash"></i> Xóa
+      </button>
+
+      </td>
+
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="8" class="text-center bg-warning">Không Có Hóa Đơn</td>
+  </tr>
+{% endfor %}

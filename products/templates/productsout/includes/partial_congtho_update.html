@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'congtho_update' form.instance.pk %}" class="js-congtho-update-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Cập Nhật Hàng Xuất</h4>
+  </div>
+  <div class="modal-body">
+    {% include 'productsout/includes/partial_congtho_form.html' %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-primary">Cập Nhật</button>
+  </div>
+</form>

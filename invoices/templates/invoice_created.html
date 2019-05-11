@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% load widget_tweaks %}
+
+{% block javascript %}
+  <script src="{% static 'js/invoice_pi.js' %}"></script>
+  <script src="{% static 'js/invoice_tm.js' %}"></script>
+  <script src="{% static 'js/invoice_tmo.js' %}"></script>
+  <script src="{% static 'js/invoice_ct.js' %}"></script>
+  <script src="{% static 'js/invoice_po.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-header">Hóa Đơn</h1>
+<div>
+  <p>
+  <h3 class="page-header">Hàng Nhập Tổng Tiền: {{ invoice.get_cost_nhap|floatformat:"0"|intcomma }}</h3>
+
+
+  <button type="button" class="btn btn-primary js-create-piin"
+    data-url="{% url 'piin_create' invoice.id %}">
+      <i class="fas fa-plus"></i>
+      Tạo Hàng Nhập
+    </button>
+
+  </p>
+  <table class="table" id="piin-table">
+    <thead>
+      <tr>
+        <th>Ten San Pham</th>
+        <th>So Chi</th>
+        <th>Tuoi Cua Vang</th>
+        <th>Tien/Chi</th>
+        <th>Thanh Tien</th>
+	<th>Ghi Chu</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'includes/partial_piin_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-piin">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+<div>
+  <h4 class="page-header">Tiền Mặt</h4>
+
+  <p>
+  <button type="button" class="btn btn-primary js-create-tm"
+    data-url="{% url 'tm_create' invoice.id %}">
+      <i class="fas fa-plus"></i>
+      Tiền Mặt
+    </button>
+
+  </p>
+  <table class="table" id="tm-table">
+    <thead>
+      <tr>
+        <th>Số Tiền</th>
+        <th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'includes/partial_tm_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-tm">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+</div>
+<div>
+  <h3 class="page-header">Hàng Xuất                                    Tổng Tiền:{{ invoice.get_cost_xuat|floatformat:"0"|intcomma }}</h3>
+  <h4 class="page-header">Công Thợ</h4>
+
+  <p>
+  <button type="button" class="btn btn-primary js-create-ct"
+    data-url="{% url 'ct_create' invoice.id %}">
+      <i class="fas fa-plus"></i>
+      Tạo Công Thợ 
+    </button>
+
+  </p>
+  <table class="table" id="ct-table">
+    <thead>
+      <tr>
+        <th>Tên Hàng</th>
+        <th>Tiền Công</th>
+	<th>Số Lượng</th>
+	<th>Thành Tiền</th>
+	<th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'includes/partial_ct_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-ct">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+</div>
+
+<div>
+  <h4 class="page-header">Hàng Xuất</h4>
+
+  <p>
+  <button type="button" class="btn btn-primary js-create-po"
+    data-url="{% url 'po_create' invoice.id %}">
+      <i class="fas fa-plus"></i>
+      Tạo Hàng Xuất
+    </button>
+
+  </p>
+  <table class="table" id="po-table">
+    <thead>
+      <tr>
+        <th>Tên Hàng</th>
+        <th>Số Chỉ</th>
+        <th>Số Tiền/Chỉ</th>
+        <th>Tuổi Của Vàng</th>
+	<th>Thành Tiền</th>
+        <th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'includes/partial_po_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-po">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+</div>
+
+
+<div>
+  <h4 class="page-header">Tiền Mặt Xuất</h4>
+
+  <p>
+  <button type="button" class="btn btn-primary js-create-tmo"
+    data-url="{% url 'tmo_create' invoice.id %}">
+      <i class="fas fa-plus"></i>
+      Tiền Mặt
+    </button>
+
+  </p>
+  <table class="table" id="tmo-table">
+    <thead>
+      <tr>
+        <th>Số Tiền</th>
+        <th>Ghi Chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% include 'includes/partial_tmo_list.html' %}
+    </tbody>
+  </table>
+  <!-- THE MODAL WE WILL BE USING -->
+  <div class="modal fade" id="modal-tmo">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      </div>
+    </div>
+</div>
+
+</div>
+<p class="text-right">
+</p>
+<h4 class="text-right">Khách Hàng Thanh Toán: {{ invoice.total_cost|floatformat:"0"|intcomma }}</h4>
+<p class="text-right">
+<a href="{% url 'invoice_list' %}" >
+ <button type="button" class="btn btn-primary">
+   Tạo Hóa Đơn
+    </button>
+</a>
+</p>
+
+{% endblock %}

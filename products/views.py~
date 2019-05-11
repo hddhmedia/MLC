@@ -1,0 +1,174 @@
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+
+from .models import ProductIn, ProductOut, CongPo
+from .forms import ProductInForm, ProductOutForm, CongPoForm
+# Create your views here.
+# Hang Nhap 
+def productsin_list(request):
+    productsins = ProductIn.objects.all()
+    return render(request, 'productsin/productsin_list.html', {'productsins': productsins})
+
+def save_productsin_form(request, form, template_name):
+    data = dict()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+            productsins = ProductIn.objects.all()
+            data['html_productsin_list'] = render_to_string('productsin/includes/partial_productsin_list.html', {
+                'productsins': productsins
+            })
+        else:
+            data['form_is_valid'] = False
+    context = {'form': form}
+    data['html_form'] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def productsin_create(request):
+    if request.method == 'POST':
+        form = ProductInForm(request.POST)
+    else:
+        form = ProductInForm()
+    return save_productsin_form(request, form, 'productsin/includes/partial_productsin_create.html')
+
+
+def productsin_update(request, pk):
+    productsin = get_object_or_404(ProductIn, pk=pk)
+    if request.method == 'POST':
+        form = ProductInForm(request.POST, instance=productsin)
+    else:
+        form = ProductInForm(instance=productsin)
+    return save_productsin_form(request, form, 'productsin/includes/partial_productsin_update.html')
+
+def productsin_delete(request, pk):
+    productsin = get_object_or_404(ProductIn, pk=pk)
+    data = dict()
+    if request.method == 'POST':
+        productsin.delete()
+        data['form_is_valid'] = True  # This is just to play along with the existing code
+        productsins = ProductIn.objects.all()
+        data['html_productsin_list'] = render_to_string('productsin/includes/partial_productsin_list.html', {
+            'productsins': productsins
+        })
+    else:
+        context = {'productsin': productsin}
+        data['html_form'] = render_to_string('productsin/includes/partial_productsin_delete.html',
+            context,
+            request=request,
+        )
+    return JsonResponse(data)
+
+# Hang congtho
+def productsout_list(request):
+    productsouts = ProductOut.objects.all()
+    congthos = CongPo.objects.all()
+    return render(request, 'productsout/productsout_list.html', {'productsouts': productsouts , 'congthos': congthos} )
+
+def save_productsout_form(request, form, template_name):
+    data = dict()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+            productsouts = ProductOut.objects.all()
+            data['html_productsout_list'] = render_to_string('productsout/includes/partial_productsout_list.html', {
+                'productsouts': productsouts
+            })
+        else:
+            data['form_is_valid'] = False
+    context = {'form': form}
+    data['html_form'] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def productsout_create(request):
+    if request.method == 'POST':
+        form = ProductOutForm(request.POST)
+    else:
+        form = ProductOutForm()
+    return save_productsout_form(request, form, 'productsout/includes/partial_productsout_create.html')
+
+
+def productsout_update(request, pk):
+    productsout = get_object_or_404(ProductOut, pk=pk)
+    if request.method == 'POST':
+        form = ProductOutForm(request.POST, instance=productsout)
+    else:
+        form = ProductOutForm(instance=productsout)
+    return save_productsout_form(request, form, 'productsout/includes/partial_productsout_update.html')
+
+def productsout_delete(request, pk):
+    productsout = get_object_or_404(ProductOut, pk=pk)
+    data = dict()
+    if request.method == 'POST':
+        productsout.delete()
+        data['form_is_valid'] = True  # This is just to play along with the existing code
+        productsouts = ProductOut.objects.all()
+        data['html_productsout_list'] = render_to_string('productsout/includes/partial_productsout_list.html', {
+            'productsouts': productsouts
+        })
+    else:
+        context = {'productsout': productsout}
+        data['html_form'] = render_to_string('productsout/includes/partial_productsout_delete.html',
+            context,
+            request=request,
+        )
+    return JsonResponse(data)
+
+# Hang xuat
+#def congtho_list(request):
+#    conthos = CongPo.objects.all()
+#    return render(request, 'productsout/productsout_list.html', {'congthos': congthos})
+
+def save_congtho_form(request, form, template_name):
+    data = dict()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            data['form_is_valid'] = True
+            congthos = CongPo.objects.all()
+            data['html_congtho_list'] = render_to_string('productsout/includes/partial_congtho_list.html', {
+                'congthos': congthos
+            })
+        else:
+            data['form_is_valid'] = False
+    context = {'form': form}
+    data['html_form'] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def congtho_create(request):
+    if request.method == 'POST':
+        form = CongPoForm(request.POST)
+    else:
+        form = CongPoForm()
+    return save_congtho_form(request, form, 'productsout/includes/partial_congtho_create.html')
+
+def congtho_update(request, pk):
+    congtho = get_object_or_404(CongPo, pk=pk)
+    if request.method == 'POST':
+        form = CongPoForm(request.POST, instance=congtho)
+    else:
+        form = CongPoForm(instance=congtho)
+    return save_congtho_form(request, form, 'productsout/includes/partial_congtho_update.html')
+
+def congtho_delete(request, pk):
+    congtho = get_object_or_404(CongPo, pk=pk)
+    data = dict()
+    if request.method == 'POST':
+        congtho.delete()
+        data['form_is_valid'] = True  # This is just to play along with the existing code
+        congtho = CongPo.objects.all()
+        data['html_congtho_list'] = render_to_string('productsout/includes/partial_congtho_list.html', {
+            'congthos': congthos
+        })
+    else:
+        context = {'congtho': congtho}
+        data['html_form'] = render_to_string('productsout/includes/partial_congtho_delete.html',
+            context,
+            request=request,
+        )
+    return JsonResponse(data)

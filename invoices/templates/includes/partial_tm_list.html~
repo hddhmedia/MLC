@@ -1,0 +1,17 @@
+{% for tm in tienmats %} 
+<tr>
+          <td>{{ tm.tienmat }}</td>
+          <td>{{ tm.note }}</td>
+	  <td>
+      <button type="button"
+              class="btn btn-warning btn-sm js-update-tm"
+              data-url="{% url 'tm_update' id=tm.invoice.id pk=tm.id %}">
+        <i class="fa fa-pencil"></i> Sửa
+      </button>
+      </td>
+  </tr>
+{% empty %}
+  <tr>
+    <td colspan="8" class="text-center bg-warning">Không Tiền Mặt</td>
+  </tr>
+{% endfor %}
